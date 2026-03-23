@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["Python 3.13.12", "Python 3.13.12Packages.pip"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[start]
+cmd = "python main.py"
+
+[phases.setup.provides]
+python = "Python 3.13.12"
