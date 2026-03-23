@@ -7,6 +7,11 @@ import os
 from flask import Flask
 import threading
 import os
+import psutil
+import time
+import platform
+import sys
+import datetime
 
 # Flask app for Railway's health checks
 flask_app = Flask(__name__)
@@ -43,7 +48,7 @@ bot = commands.Bot(
     command_prefix="!",
     intents=intents
 )
-
+start_time=time.time()
 # ---------------- READY EVENT ----------------
 @bot.event
 async def on_ready():
@@ -142,4 +147,55 @@ async def create(ctx, *, role_names):
     await ctx.send(f"✅ Created **{len(created)} roles**:\n" + "\n".join(created))
 
 # ---------------- RUN BOT ----------------
+@bot.command(name='status')
+async def status(ctx):
+    """Shows detailed bot status"""
+
+    # --- Latency ---
+    latency = round(bot.latency * 1000)  # ms
+
+    # --- Servers ---
+    guild_count = len(bot.guilds)
+
+    # --- Shards ---
+    if bot.shard_count:
+        shard_count = bot.shard_count
+        shard_info = f"{shard_count} shards"
+        if ctx.guild:
+            shard_info += f" (this guild: shard {ctx.guild.shard_id})"
+    else:
+        shard_info = "No sharding"
+
+    # --- Memory usage (RSS) ---
+    process = psutil.Process(os.getpid())
+    memory_mb = process.memory_info().rss / 1024 / 1024
+
+    # --- CPU usage ---
+    cpu_percent = process.cpu_percent(interval=0.1)
+
+    # --- Uptime ---
+    uptime_seconds = time.time() - start_time
+    uptime_str = str(datetime.timedelta(seconds=int(uptime_seconds)))
+
+    # --- Versions ---
+    python_version = platform.python_version()
+    discord_py_version = discord.__version__
+
+    # --- Build Embed ---
+    embed = discord.Embed(
+        title="🤖 Bot Status",
+        color=discord.Color.green()
+    )
+    embed.add_field(name="⏱️ Latency", value=f"{latency} ms", inline=True)
+    embed.add_field(name="🏰 Servers", value=f"{guild_count}", inline=True)
+    embed.add_field(name="🗂️ Shards", value=shard_info, inline=True)
+    embed.add_field(name="💾 Memory", value=f"{memory_mb:.2f} MB", inline=True)
+    embed.add_field(name="⚙️ CPU", value=f"{cpu_percent:.1f}%", inline=True)
+    embed.add_field(name="⏲️ Uptime", value=uptime_str, inline=True)
+    embed.add_field(name="🐍 Python", value=python_version, inline=True)
+    embed.add_field(name="📦 discord.py", value=discord_py_version, inline=True)
+
+    await ctx.send(embed=embed)
+
+
 bot.run(TOKEN)
