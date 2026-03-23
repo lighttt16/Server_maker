@@ -4,6 +4,27 @@ import asyncio
 import re
 from dotenv import load_dotenv
 import os
+from flask import Flask
+import threading
+import os
+
+# Flask app for Railway's health checks
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+def health():
+    return "Bot is running!"
+
+def run_flask():
+    flask_app.run(host='0.0.0.0', port=int(os.getenv('PORT', 8080)))
+
+# Start Flask in a background thread
+threading.Thread(target=run_flask, daemon=True).start()
+
+# ... your existing bot code below ...
+
+
+
 
 # ---------------- LOAD ENV ----------------
 load_dotenv()  # Loads .env file
