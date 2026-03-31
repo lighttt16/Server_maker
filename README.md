@@ -1,1 +1,2 @@
 Hey I am a simple bot made to create server categories and channels easily with just a simple command and yeah also i can edit the existing categories channels and i can create roles as welll tho i cant manage and setup the roles permissions you gotta do that but i can help you create the perfect server structure and yeah im open source so you can cop and use my code and make one of your own bot as well thankyou !
+and yeah im as it is ready to be deployed on railway as a test so you can take the codes and files then deploy it on railway as well!
