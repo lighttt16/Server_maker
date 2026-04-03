@@ -146,6 +146,26 @@ async def create(ctx, *, role_names):
         created.append(role.name)
     await ctx.send(f"✅ Created **{len(created)} roles**:\n" + "\n".join(created))
 
+
+    @bot.command()
+    @commands.has_permissions(manage_channels=True)
+    async def ch(ctx, action: str, category_name: str):
+        if action.lower() == "delete":
+            category = discord.utils.get(ctx.guild.categories, name=category_name)
+
+        if not category:
+            await ctx.send("Category not found.")
+            return
+
+        # Delete all channels inside the category
+        for channel in category.channels:
+            await channel.delete()
+
+        # Delete the category itself
+        await category.delete()
+
+        await ctx.send(f"Deleted category `{category_name}` and all its channels.")
+
 # ---------------- RUN BOT ----------------
 @bot.command(name='status')
 async def status(ctx):
