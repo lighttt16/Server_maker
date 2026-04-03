@@ -26,11 +26,6 @@ def run_flask():
 # Start Flask in a background thread
 threading.Thread(target=run_flask, daemon=True).start()
 
-# ... your existing bot code below ...
-
-
-
-
 # ---------------- LOAD ENV ----------------
 load_dotenv()  # Loads .env file
 TOKEN = os.getenv("TOKEN")  # Reads TOKEN from .env
